@@ -4,10 +4,10 @@
 
 
 name = "marrow.wsgi.egress.compression"
-version = "0.1"
-release = "0.1"
+version = "1.0"
+release = "1.0"
 
-summary = "Egress compression filter for compatible WSGI2 servers."
+summary = "A GZip compression egress filter for WSGI 2 applications on Python 2.6+ and 3.1+."
 description = """"""
 author = "Alice Bevan-McGregor"
 email = "alice+marrow@gothcandy.com"

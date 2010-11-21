@@ -23,7 +23,7 @@ Usage example:
 """
 
 
-import gzip
+from gzip import GzipFile
 
 from marrow.util.compat import binary, unicode, IO
 
@@ -48,6 +48,10 @@ class CompressionFilter(object):
         """
         
         # TODO: Remove some of this debug logging; it'll slow things down and isn't really needed.
+        
+        if request.get('wsgi.compression', True) == False:
+            log.debug("Bypassing compression at application's request.")
+            return status, headers, body
         
         if hasattr(body, '__call__'):
             log.debug("Can not compress async responses, returning original response.")
@@ -85,7 +89,7 @@ class CompressionFilter(object):
         # TODO: If the Content-Length is > 4MiB, we should use a tmpfile on-disk instead!
         
         buf = IO()
-        compressed = gzip.GzipFile(mode='wb', compresslevel=self.level, fileobj=buf)
+        compressed = GzipFile(mode='wb', compresslevel=self.level, fileobj=buf)
         
         for chunk in body:
             compressed.write(chunk)
