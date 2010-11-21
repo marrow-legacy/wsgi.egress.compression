@@ -1,3 +1,110 @@
-h2. Egress Compression Filter
+h1(#title). GZip Compression Egress Filter
 
-This package contains a GZip-based egress filter compatible with Python 2.6+ and Python 3.1+ usable with the ingress/egress filtering API of WSGI2-compatible @marrow.server@ implementations such as @marrow.server.http@.
+bq(subtitle). GZip compression egress filter for WSGI2 applications.
+
+bq(byline). (C) 2010, Alice Bevan-McGregor
+
+bq(byline). "https://github.com/pulp/marrow.wsgi.egress.compression":github-project
+
+
+[github-project]https://github.com/pulp/marrow.wsgi.egress.compression
+
+
+
+h2(#what-is). %1.% What is GZip Compression Filtering?
+
+Modern web browsers support compression of the HTML (or other) content that web servers return.  Compressing the content allows the files to be downloaded faster and thus presented to the user faster, increasing the perceived speed of web browsing.  This package implements an egress[1] filter for compatible WSGI 2 servers, such as "@marrow.server.http@":marrow-server-http.
+
+Currently it is not possible to compress the output of an asynchronous body; if the WSGI environment variable @wsgi.async@ is @True@, compression is disabled.  Likewise, this filter does not compress MIME types other than @text/*@ and @application/*@, excluding MIME types that include the word @zip@, such as @applicaiton/x-gzip@ or @application/zip@ -- these files are already compressed, compressing them again will waste CPU cycles and likely _increase_ the resulting content size.
+
+As compression is an intensive process the improvement in perceived speed may be negligible for content that is difficult to compress.  It can take longer to compress than the amount of time saved during over-the-wire transfer!
+
+If you are using a front-end load balancer it would be better to utilize the compression features it has.  For example, Apache's "@mod_deflate@":mod_deflate and "@mod_gzip@":mod_gzip or Nginx's "@HttpGzipModule@":HttpGzipModule.
+
+
+fn1. *egress* |ˈēˌgres| -- noun -- the action of going out of or leaving a place
+
+[marrow-server-http]https://github.com/pulp/marrow.server.http
+[mod_deflate]http://httpd.apache.org/docs/2.0/mod/mod_deflate.html
+[mod_gzip]http://www.schroepl.net/projekte/mod_gzip/
+[HttpGzipModule]http://wiki.nginx.org/NginxHttpGzipModule
+
+
+
+h2(#installation). %2.% Installation
+
+Installing @marrow.wsgi.egress.compression@ is easy, just execute the following in a terminal:
+
+<pre><code>pip install marrow.wsgi.egress.compression</code></pre>
+
+If you add @marrow.wsgi.egress.compression@ to the @install_requires@ argument of the call to @setup()@ in your application's @setup.py@ file, the filter will be automatically installed and made available when your own application is installed.
+
+
+
+h3(#install-dev). %2.1.% Development Version
+
+Development takes place on "GitHub":github in the "marrow.wsgi.egress.compression":github-project project.  Issue tracking, documentation, and downloads are provided there.
+
+Installing the current development version requires "Git":git, a distributes source code management system.  If you have Git, you can run the following to download and _link_ the development version into your Python runtime:
+
+<pre><code>git clone https://github.com/pulp/marrow.wsgi.egress.compression.git
+(cd marrow.wsgi.egress.compression; make devel)</code></pre>
+
+You can upgrade to the latest version at any time:
+
+<pre><code>(cd marrow.wsgi.egress.compression; make update devel)</code></pre>
+
+If you would like to make changes and contribute them back to the project, fork the GitHub project, make your changes, and submit a pull request.  This process is beyond the scope of this documentation; for more information, see "GitHub's documentation":github-help.
+
+
+[github]https://github.com/
+[git]http://git-scm.com/
+[github-help]http://help.github.com/
+
+
+
+h2(#basic). %3.% Usage
+
+Simply create a new instance of @CompressionFilter@ and pass it to your WSGI server as an egress filter. Please refer to the documentation for your WSGI server of choice for instructions on how to do this.  An example is provided below which utilizes the @Marrow HTTP/1.1 server@:[marrow-http].
+
+In general this should be the last filter in the stack as the response body is no longer readable (it's binary compressed GZip) once the filter has run.
+
+The @CompressionFilter@ class accepts a single argument, @level@, which defaults to 6.  This is a number between 0 (no compression) and 9 (maximum compression) and is passed directly to @gzip.GzipFile@.
+
+If the content returned by your WSGI application is incompressible (encrypted or already compressed) than additional compression may actually produce a larger response and negatively impact your application's performance.  To prevent this, the @CompressionFilter@ examines the WSGI environment and will bypass compression if it finds a key in the environment named @wsgi.compression@ that evaluates to @False@.  You can disable compression by setting this.  Other compression filters or middleware should likewise check for the presence of this value and bypass themselves if @False@.
+
+
+h2(#basic-example). %3.% Basic Example
+
+<pre><code>import logging
+from marrow.server.http import HTTPServer
+from marrow.wsgi.egress.compression import CompressionFilter
+
+def hello(request):
+    return b'200 OK', [(b'Content-Type', b'text/plain'), (b'Content-Length', b'100')], [b'a' * 100]
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    
+    server = HTTPServer(None, 8080, application=hello, egress=[CompressionFilter(level=1)])
+    server.start()</code></pre>
+
+
+[marrow-http]https://github.com/pulp/marrow.server.http
+
+
+
+h2(#license). %4.% License
+
+This project has been released under the MIT Open Source license.
+
+
+h3. %4.1.% The MIT License
+
+Copyright (C) 2010 Alice Bevan-McGregor and contributors.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
