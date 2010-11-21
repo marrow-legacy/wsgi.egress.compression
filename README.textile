@@ -1,0 +1,3 @@
+h2. Egress Compression Filter
+
+This package contains a GZip-based egress filter compatible with Python 2.6+ and Python 3.1+ usable with the ingress/egress filtering API of WSGI2-compatible @marrow.server@ implementations such as @marrow.server.http@.
