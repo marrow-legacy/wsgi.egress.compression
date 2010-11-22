@@ -55,9 +55,17 @@ setup(
                 "License :: OSI Approved :: MIT License",
                 "Operating System :: OS Independent",
                 "Programming Language :: Python",
+                "Programming Language :: Python :: 2.6",
+                "Programming Language :: Python :: 2.7",
+                "Programming Language :: Python :: 3.1",
+                "Programming Language :: Python :: 3.2",
+#                "Testing :: Complete",
                 "Topic :: Software Development :: Libraries :: Python Modules",
                 "Topic :: Internet :: WWW/HTTP :: WSGI",
-                "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware"
+                "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware",
+#                "Topic :: Internet :: WWW/HTTP :: WSGI 2",
+#                "Topic :: Internet :: WWW/HTTP :: WSGI 2 :: Filter :: Egress",
+                "Topic :: Utilities"
             ],
         
         packages = find_packages(exclude=['tests', 'tests.*', 'docs']),
