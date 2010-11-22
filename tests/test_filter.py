@@ -74,8 +74,6 @@ class TestCompressionFilter(TestCase):
         return data
     
     def test_functional(self):
-        # status, headers, body = self.filter(self.mock_environ(), status, self.mock_headers(), body)
-        
         _, headers, body = self.filter(self.mock_environ(), _status, self.mock_headers(len(_body)), [_body])
         assert int(self.find('content-length', headers)[0]) < len(_body), "Content didn't shrink."
         self.assertEquals(_body, self.decompress(body))
