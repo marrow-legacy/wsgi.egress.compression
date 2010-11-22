@@ -71,7 +71,7 @@ In general this should be the last filter in the stack as the response body is n
 
 The @CompressionFilter@ class accepts a single argument, @level@, which defaults to 6.  This is a number between 0 (no compression) and 9 (maximum compression) and is passed directly to @gzip.GzipFile@.
 
-If the content returned by your WSGI application is incompressible (encrypted or already compressed) than additional compression may actually produce a larger response and negatively impact your application's performance.  To prevent this, the @CompressionFilter@ examines the WSGI environment and will bypass compression if it finds a key in the environment named @wsgi.compression@ that evaluates to @False@.  You can disable compression by setting this.  Other compression filters or middleware should likewise check for the presence of this value and bypass themselves if @False@.
+If the content returned by your WSGI application is incompressible (encrypted or already compressed) than additional compression may actually produce a larger response and negatively impact your application's performance.  To prevent this, the @CompressionFilter@ examines the WSGI environment and will bypass compression if it finds a key in the environment named @wsgi.compression@ that is @False@.  You can disable compression by setting this.  Other compression filters or middleware should likewise check for the presence of this value and bypass themselves if @False@.
 
 [marrow-http]https://github.com/pulp/marrow.server.http
 
