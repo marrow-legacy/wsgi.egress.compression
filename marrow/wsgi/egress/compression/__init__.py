@@ -49,7 +49,7 @@ class CompressionFilter(object):
         
         # TODO: Remove some of this debug logging; it'll slow things down and isn't really needed.
         
-        if request.get('wsgi.compression', True) == False:
+        if request.get('wsgi.compression', True) is False:
             log.debug("Bypassing compression at application's request.")
             return status, headers, body
         
