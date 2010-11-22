@@ -36,5 +36,5 @@ tests: .testing-deps
 
 release: tests
 	cp -f setup.cfg-release setup.cfg
-	python setup.py register sdist bdist_egg upload upload_docs
+	python setup.py register sdist bdist_egg upload
 	cp -f setup.cfg-devel setup.cfg
