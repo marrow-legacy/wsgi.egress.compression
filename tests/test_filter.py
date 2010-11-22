@@ -4,7 +4,7 @@ from gzip import GzipFile
 
 from unittest import TestCase
 
-from marrow.util.compat import IO
+from marrow.util.compat import IO, unicode
 from marrow.wsgi.egress.compression import CompressionFilter
 
 
