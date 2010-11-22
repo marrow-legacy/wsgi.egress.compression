@@ -37,7 +37,7 @@ class TestCompressionFilter(TestCase):
             }
         
         if enable:
-            environ['HTTP_ACCEPT_ENCODING'] = 'gzip'
+            environ['HTTP_ACCEPT_ENCODING'] = b'gzip'
         
         if disable:
             environ['wsgi.compression'] = False
