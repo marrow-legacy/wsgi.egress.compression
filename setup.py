@@ -49,13 +49,15 @@ setup(
         tests_require = ['nose', 'coverage'],
         
         classifiers = [
-                "Development Status :: 4 - Beta",
+                "Development Status :: 5 - Production/Stable",
                 "Environment :: Console",
                 "Intended Audience :: Developers",
                 "License :: OSI Approved :: MIT License",
                 "Operating System :: OS Independent",
                 "Programming Language :: Python",
-                "Topic :: Software Development :: Libraries :: Python Modules"
+                "Topic :: Software Development :: Libraries :: Python Modules",
+                "Topic :: Internet :: WWW/HTTP :: WSGI",
+                "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware"
             ],
         
         packages = find_packages(exclude=['tests', 'tests.*', 'docs']),
