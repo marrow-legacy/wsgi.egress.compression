@@ -73,6 +73,8 @@ The @CompressionFilter@ class accepts a single argument, @level@, which defaults
 
 If the content returned by your WSGI application is incompressible (encrypted or already compressed) than additional compression may actually produce a larger response and negatively impact your application's performance.  To prevent this, the @CompressionFilter@ examines the WSGI environment and will bypass compression if it finds a key in the environment named @wsgi.compression@ that evaluates to @False@.  You can disable compression by setting this.  Other compression filters or middleware should likewise check for the presence of this value and bypass themselves if @False@.
 
+[marrow-http]https://github.com/pulp/marrow.server.http
+
 
 h3(#basic-example). %3.1.% Basic Example
 
@@ -90,7 +92,27 @@ if __name__ == '__main__':
     server.start()</code></pre>
 
 
-[marrow-http]https://github.com/pulp/marrow.server.http
+h3(#middleware-usage). %3.2.% Acting as WSGI 2 Middleware
+
+While this is technically an _egress filter_, processing only the trailing edge, outbound, of the request/response cycle, you can still use this filter as if it were full middleware.  It is slightly less efficient to do this as there is additional stack overhead and method call nesting, however.  If you must, you can follow this example:
+
+<pre><code>import logging
+from functools import partial
+from marrow.server.http import HTTPServer
+from marrow.wsgi.egress.compression import CompressionFilter
+
+def hello(request):
+    return b'200 OK', [(b'Content-Type', b'text/plain'), (b'Content-Length', b'100')], [b'a' * 100]
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    
+    egress = lambda app, filter, environ: filter(environ, *app(environ))
+    
+    server = HTTPServer(None, 8080, application=partial(egress, hello, CompressionFilter(level=6)))
+    server.start()</code></pre>
+
+The @egress@ lambda function declared in this example is useful to adapt any egress filter for use as middleware.
 
 
 

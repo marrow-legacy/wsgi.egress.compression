@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 import logging
+from functools import partial
 from marrow.server.http import HTTPServer
 from marrow.wsgi.egress.compression import CompressionFilter
 
@@ -14,5 +15,7 @@ def hello(request):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     
-    server = HTTPServer(None, 8080, application=hello, egress=[CompressionFilter(level=1)])
+    egress = lambda app, filter, environ: filter(environ, *app(environ))
+    
+    server = HTTPServer(None, 8080, application=partial(egress, hello, CompressionFilter(level=1)))
     server.start()
