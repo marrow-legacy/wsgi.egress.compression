@@ -34,7 +34,7 @@ docs:
 tests: .testing-deps
 	python setup.py nosetests
 
-release: tests docs
+release: tests
 	cp -f setup.cfg-release setup.cfg
 	python setup.py register sdist bdist_egg upload upload_docs
 	cp -f setup.cfg-devel setup.cfg
