@@ -103,10 +103,10 @@ class TestCompressionFilter(TestCase):
         _, headers, body = self.filter(self.mock_environ(), _status, self.mock_headers(len(_body), mime=None), [_body])
         self.assertEquals(_body, b''.join(body))
         
-        _, headers, body = self.filter(self.mock_environ(), _status, self.mock_headers(len(_body), disable="application/gzip"), [_body])
+        _, headers, body = self.filter(self.mock_environ(), _status, self.mock_headers(len(_body), mime=b"application/gzip"), [_body])
         self.assertEquals(_body, b''.join(body))
         
-        _, headers, body = self.filter(self.mock_environ(), _status, self.mock_headers(len(_body), mime='video/mpeg4'), [_body])
+        _, headers, body = self.filter(self.mock_environ(), _status, self.mock_headers(len(_body), mime=b'video/mpeg4'), [_body])
         self.assertEquals(_body, b''.join(body))
     
     def test_inefficient(self):
