@@ -53,7 +53,7 @@ class CompressionFilter(object):
             log.debug("Bypassing compression at application's request.")
             return status, headers, body
         
-        if hasattr(body, '__call__'):
+        if request.get('wsgi.async') and hasattr(body, '__call__'):
             log.debug("Can not compress async responses, returning original response.")
             return status, headers, body
         
@@ -99,11 +99,12 @@ class CompressionFilter(object):
         length = buf.tell()
         buf.seek(0)
         
-        clength = int(clength)
-        log.debug("Content-Length: %d - Compressed: %d - Savings: %d (%d%%)", clength, length, clength - length, length * 100 // clength)
+        if clength:
+            clength = int(clength)
+            log.debug("Content-Length: %d - Compressed: %d - Savings: %d (%d%%)", clength, length, clength - length, length * 100 // clength)
         
-        if length > int(clength):
-            log.warn("Compression increased size of response!")
+            if length > int(clength):
+                log.warn("Compression increased size of response!")
         
         length = (b'Content-Length', unicode(length).encode('ascii'))
         
