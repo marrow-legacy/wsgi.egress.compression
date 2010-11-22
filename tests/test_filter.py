@@ -75,7 +75,7 @@ class TestCompressionFilter(TestCase):
     
     def test_functional(self):
         _, headers, body = self.filter(self.mock_environ(), _status, self.mock_headers(len(_body)), [_body])
-        assert int(self.find('content-length', headers)[0]) < len(_body), "Content didn't shrink."
+        assert int(self.find(b'content-length', headers)[0]) < len(_body), "Content didn't shrink."
         self.assertEquals(_body, self.decompress(body))
         
         _, headers, body = self.filter(self.mock_environ(async=True), _status, self.mock_headers(len(_body)), [_body])
@@ -109,7 +109,7 @@ class TestCompressionFilter(TestCase):
     
     def test_inefficient(self):
         _, headers, body = self.filter(self.mock_environ(), _status, self.mock_headers(1), [b'a'])
-        assert int(self.find('content-length', headers)[0]) > 1, "Content didn't grow in size."
+        assert int(self.find(b'content-length', headers)[0]) > 1, "Content didn't grow in size."
         self.assertEquals(b'a', self.decompress(body))
     
     def test_edge(self):
